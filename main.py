@@ -5,14 +5,14 @@ from google import genai
 
 
 def handle_arg():
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("Usage: main.py <prompt>")
         sys.exit(1)
-    return sys.argv[1]
+    return sys.argv[1], sys.argv[2]
 
 
 def main():
-    prompt = handle_arg()
+    prompt, verbose_set = handle_arg()
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
@@ -22,8 +22,10 @@ def main():
         contents=[prompt],
     )
     print(response.text)
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    if verbose_set:
+        print(f"User prompt: {prompt}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
 
 if __name__ == "__main__":
